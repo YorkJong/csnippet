@@ -1,0 +1,51 @@
+[utility(v8)20050913.rar]
+ 1. Re-commented TU_ASSERT(.):ToyUint.h
+ 2. Added ASSERT(.), an modified version of ANSI C's assert, into debug.h
+ 3. Added debug.c for macro ASSERT(.) in debug.h
+
+[utility(v7)20050620.rar]
+ 1. Fixed bugs in FindRisenBit():Bitmap.c
+ 2. adapted Bitmap_test.c to test/reproduce the bug
+
+[utility(v6)20050607.rar]
+ 1. Added file debug.h
+ 2. Added DebugCode(.) to debug.h
+
+[utility(v5)20050527.rar]
+ 1. Fixed bug in FindRisenBitRingedly(.):Bitmap.c
+    (1) calls TU_ASSERT("t9-5"):Bitmap_test.c to reproduce the bug.
+ 2. Fixed bug in FindRisenByteRingedly(.):Bitmap.c
+    (1) calls TU_ASSERT("t11-3"...):Bitmap_test.c to reproduce the bug.
+
+[utility(v4)20050524.rar]
+ 1. Refactoring
+    (1) Replaced all "((XX & 0x1) == 1)" with "(XX & 0x1)" for idiom of C
+    ...
+ 2. Altered Makefile for the execution of all _test files
+ 3. Revised the prefix comments of file ToyUnit.h
+
+[utility(v3)20050514.rar]
+ 1. Refactoring
+    (1) Altered algorithm of RisenBitCount():Bitmap.c
+    (2) Altered algorithm of FindRisenBit():Bitmap.c
+    (3) adapted Bitmap_test.c to fit the new situation
+
+[utility(v2)20050424.rar]
+ 1. Bitmap.c: adds operations of byte-bits supporting
+
+[utility(v1)20050417.rar]
+ 1. Refactoring
+    (1) Bitmap.c: for readable, replaces "SHIFT" and "MASK" with "/" and "%"
+    (2) platform.h: replaces "bit" with "uint8_t" for portable
+
+[utility(v0)20050320.rar]
+ 1. Initial version
+ 2. file description:
+    (1) ToyUnit.h: a framework of unit test for simple usage
+    (2) ToyUnit_test.c: unit test for ToyUnit
+    (3) Bitmap.h
+    (4) Bitmap.c: uses SHIFT and MASK
+    (5) Bitmap_test.c: unit test for Bitmap
+    (6) stdint.h: for Keil C; and modified from version of gcc3.4.2
+    (7) platform.h: for switching platform-dependent configuration
+    (8) Makefile: for unit test

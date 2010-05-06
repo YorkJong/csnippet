@@ -1,0 +1,76 @@
+/**
+ * @file queue_test.c
+ *      tests the queue.
+ * @author Jiang Yu-Kuan yukuan.jiang@gmail.com
+ * @date 2006/05/07
+ * @version 1.0
+ */
+#include <stdio.h>
+#include "Queue.h"
+#include "ToyUnit.h"
+
+enum {
+    BUF_SIZE= 3
+};
+
+char buf[BUF_SIZE];
+
+int main()
+{
+    Queue q;
+
+    Q_init( &q, buf, BUF_SIZE );
+    TU_ASSERT("03", Q_empty(&q));
+    TU_ASSERT("04", !Q_full(&q));
+    TU_ASSERT("05", Q_size(&q) == 0);
+
+    Q_add(&q, 'a');
+    TU_ASSERT("12", Q_peek(&q)=='a');
+    TU_ASSERT("13", !Q_empty(&q));
+    TU_ASSERT("14", !Q_full(&q));
+    TU_ASSERT("15", Q_size(&q) == 1);
+
+    Q_add(&q, 'b');
+    TU_ASSERT("22", Q_peek(&q)=='a');
+    TU_ASSERT("23", !Q_empty(&q));
+    TU_ASSERT("24", !Q_full(&q));
+    TU_ASSERT("25", Q_size(&q) == 2);
+
+    Q_add(&q, 'c');
+    TU_ASSERT("32", Q_peek(&q)=='a');
+    TU_ASSERT("33", !Q_empty(&q));
+    TU_ASSERT("34", Q_full(&q));
+    TU_ASSERT("35", Q_size(&q) == 3);
+
+    TU_ASSERT("41", Q_get(&q)=='a');
+    TU_ASSERT("42", Q_peek(&q)=='b');
+    TU_ASSERT("43", !Q_empty(&q));
+    TU_ASSERT("44", !Q_full(&q));
+    TU_ASSERT("45", Q_size(&q) == 2);
+
+    TU_ASSERT("51", Q_get(&q)=='b');
+    TU_ASSERT("52", Q_peek(&q)=='c');
+    TU_ASSERT("53", !Q_empty(&q));
+    TU_ASSERT("54", !Q_full(&q));
+    TU_ASSERT("55", Q_size(&q) == 1);
+
+    TU_ASSERT("61", Q_get(&q)=='c');
+    TU_ASSERT("63", Q_empty(&q));
+    TU_ASSERT("64", !Q_full(&q));
+    TU_ASSERT("65", Q_size(&q) == 0);
+
+    Q_add(&q, 'd');
+    TU_ASSERT("72", Q_peek(&q)=='d');
+    TU_ASSERT("73", !Q_empty(&q));
+    TU_ASSERT("74", !Q_full(&q));
+    TU_ASSERT("75", Q_size(&q) == 1);
+
+    TU_ASSERT("81", Q_get(&q)=='d');
+    TU_ASSERT("83", Q_empty(&q));
+    TU_ASSERT("84", !Q_full(&q));
+    TU_ASSERT("85", Q_size(&q) == 0);
+
+    TU_RESULT();
+
+    return 0;
+}

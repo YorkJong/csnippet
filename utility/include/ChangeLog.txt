@@ -1,0 +1,13 @@
+[2005/10/18]
+1. Altered platform.h for compatibility.
+
+[2005/8/4]
+1. Alters platform.h for inhibiting the failure on compiling error
+   upon the using of _at_ keyword without Keil C51.
+2. Adds this change log :-)
+
+[2005/3/13]
+1. initial version
+2. file list
+    a. platform.h -- for source porting seamlessly between Keil C and ANSI C
+    b. stdint.h -- for supporting ANSI C's "stdint.h" on Keil C

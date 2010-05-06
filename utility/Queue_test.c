@@ -1,11 +1,10 @@
 /**
  * @file queue_test.c
  *      tests the queue.
- * @author Jiang Yu-Kuan yukuan.jiang@gmail.com
+ * @author Jiang Yu-Kuan, yukuan.jiang@gmail.com
  * @date 2006/05/18
  * @version 2.0
  */
-#include <stdio.h>
 #include "Queue.h"
 #include "ToyUnit.h"
 

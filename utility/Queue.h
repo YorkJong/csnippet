@@ -1,7 +1,7 @@
 /**
  * @file queue.h
  *      Interface of a queue module.
- * @author Jiang Yu-Kuan yukuan.jiang@gmail.com
+ * @author Jiang Yu-Kuan, yukuan.jiang@gmail.com
  * @date 2006/05/18
  * @version 2.0
  */

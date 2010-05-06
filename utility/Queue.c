@@ -1,7 +1,7 @@
 /**
  * @file queue.c
  *      Implementes a queue module, and that uses a circular array.
- * @author Jiang Yu-Kuan yukuan.jiang@gmail.com
+ * @author Jiang Yu-Kuan, yukuan.jiang@gmail.com
  * @date 2006/05/07 (initial version)
  * @date 2006/05/18 (last revision)
  * @version 2.0

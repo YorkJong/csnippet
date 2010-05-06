@@ -6,6 +6,7 @@ Target (os51), 0x0000 // Tools: 'MCS-51'
 Group (auto gen)
 Group (scheduler)
 Group (utility)
+Group (misc)
 
 File 1,2,<.\STARTUP.A51><STARTUP.A51> 0x0 
 File 2,1,<.\src\scheduler.c><scheduler.c> 0x0 
@@ -14,6 +15,8 @@ File 2,1,<.\src\main.c><main.c> 0x0
 File 2,1,<.\src\menu.c><menu.c> 0x0 
 File 2,1,<.\src\timer.c><timer.c> 0x0 
 File 3,1,<.\src\utility\Queue.c><Queue.c> 0x0 
+File 4,5,<.\Doxyfile><Doxyfile> 0x0 
+File 4,5,<.\os51.ini><os51.ini> 0x0 
 
 
 Options 1,0,0  // Target 'os51'

@@ -70,6 +70,17 @@ int main()
     TU_ASSERT("84", !Q_full(&q));
     TU_ASSERT("85", Q_size(&q) == 0);
 
+    TU_ASSERT("91", Q_unget(&q)=='d');
+    TU_ASSERT("92", Q_peek(&q)=='d');
+    TU_ASSERT("93", !Q_empty(&q));
+    TU_ASSERT("94", !Q_full(&q));
+    TU_ASSERT("95", Q_size(&q) == 1);
+
+    Q_clear(&q);
+    TU_ASSERT("103", Q_empty(&q));
+    TU_ASSERT("104", !Q_full(&q));
+    TU_ASSERT("105", Q_size(&q) == 0);
+
     TU_RESULT();
 
     return 0;

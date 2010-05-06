@@ -2,8 +2,9 @@
  * @file queue.c
  *      Implementes a queue module, and that uses a circular array.
  * @author Jiang Yu-Kuan yukuan.jiang@gmail.com
- * @date 2006/05/07
- * @version 1.0
+ * @date 2006/05/07 (initial version)
+ * @date 2006/05/10 (last revision)
+ * @version 2.0
  */
 #include "Queue.h"
 #include <assert.h>
@@ -21,6 +22,15 @@ void Q_init( Queue* q, QueueItem* buf, size_t buf_size )
     q->count= 0;
     q->buf= buf;
     q->buf_size= buf_size;
+}
+
+
+/** Clear the queue */
+void Q_clear( Queue* q )
+{
+    q->first= 0;
+    q->end= 0;
+    q->count= 0;
 }
 
 
@@ -51,6 +61,21 @@ QueueItem Q_get( Queue* q )
     i= q->buf[q->first];
     q->first= (q->first+1) % q->buf_size;
     return i;
+}
+
+
+/** Rolls back a "get" operation.
+ * This cannot work correctly next to 'clear' operation.
+ * @return the previous character
+ */
+QueueItem Q_unget( Queue* q )
+{
+    ++q->count;
+    if (q->first == 0)
+        q->first= q->buf_size - 1;
+    else
+        q->first= (q->first-1) % q->buf_size;
+    return q->buf[q->first];
 }
 
 

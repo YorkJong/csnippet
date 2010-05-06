@@ -3,14 +3,17 @@
 
 Target (os51), 0x0000 // Tools: 'MCS-51'
 
+Group (auto_gen)
 Group (scheduler)
 Group (utility)
 
-File 1,1,<.\conio.c><conio.c> 0x0 
-File 1,1,<.\menu.c><menu.c> 0x0 
-File 1,1,<.\main.c><main.c> 0x0 
-File 1,1,<.\scheduler.c><scheduler.c> 0x0 
-File 2,1,<.\utility\Queue.c><Queue.c> 0x0 
+File 1,2,<.\STARTUP.A51><STARTUP.A51> 0x0 
+File 2,1,<.\src\scheduler.c><scheduler.c> 0x0 
+File 2,1,<.\src\conio.c><conio.c> 0x0 
+File 2,1,<.\src\main.c><main.c> 0x0 
+File 2,1,<.\src\menu.c><menu.c> 0x0 
+File 2,1,<.\src\timer.c><timer.c> 0x0 
+File 3,1,<.\src\utility\Queue.c><Queue.c> 0x0 
 
 
 Options 1,0,0  // Target 'os51'
@@ -20,6 +23,7 @@ Options 1,0,0  // Target 'os51'
  FlashUt ()
  StupF ("LIB\STARTUP.A51" ("Standard 8051 Startup Code"))
  FlashDR ()
+ DevID ()
  Rgf (REGX52.H)
  Mem ()
  C ()
@@ -52,10 +56,12 @@ Options 1,0,0  // Target 'os51'
  RunUsr 1 0 <>
  BrunUsr 0 0 <>
  BrunUsr 1 0 <>
+ CrunUsr 0 0 <>
+ CrunUsr 1 0 <>
  SVCSID <>
- MODEL5=2
+ MODEL5=1
  RTOS5=0
- ROMSZ5=2
+ ROMSZ5=1
  DHOLD5=0
  XHOLD5=0
  T51FL=80
@@ -76,7 +82,7 @@ Options 1,0,0  // Target 'os51'
  C51MSC ()
  C51DEF ()
  C51UDF ()
- INCC5 (./include;./utility)
+ INCC5 (.\src\include;.\src\utility;.\src)
  AX51FL=4
  AX51MSC ()
  AX51SET ()
@@ -92,9 +98,9 @@ Options 1,0,0  // Target 'os51'
  CustArgs ()
  LibMods ()
  BankNo=65535
- LX51FL=288
- LX51OVL ()
- LX51MSC (OVERLAY (main ~ (MENU_CommandProcessor), SCH_DispatchTasks ! (MENU_CommandProcessor)))
+ LX51FL=292
+ LX51OVL (main ~ (CON_Update, MENU_CommandProcessor), SCH_DispatchTasks ! (CON_Update, MENU_CommandProcessor))
+ LX51MSC ()
  LX51DWN ()
  LX51LFI ()
  LX51ASN ()

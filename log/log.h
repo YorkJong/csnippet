@@ -34,27 +34,27 @@
 //-----------------------------------------------------------------------------
 
 #if LOG_LEVEL >= LL_TRACE
-    #define LTrc(args)  LOG("[TRC] ", args)
+    #define TRC(args)  LOG("[TRC] ", args)
 #else
-    #define LTrc(args)
+    #define TRC(args)
 #endif
 
 #if LOG_LEVEL >= LL_DEBUG
-    #define LDbg(args)  LOG("[DBG] ", args)
+    #define DBG(args)  LOG("[DBG] ", args)
 #else
-    #define LDbg(args)
+    #define DBG(args)
 #endif
 
 #if LOG_LEVEL >= LL_INFO
-    #define LInfo(args)  LOG("[INF] ", args)
+    #define INFO(args)  LOG("[INF] ", args)
 #else
-    #define LInfo(args)
+    #define INFO(args)
 #endif
 
 #if LOG_LEVEL >= LL_ERROR
-    #define LErr(args)  LOG("[ERR] ", args)
+    #define ERR(args)  LOG("[ERR] ", args)
 #else
-    #define LErr(args)
+    #define ERR(args)
 #endif
 
 //-----------------------------------------------------------------------------

@@ -9,22 +9,22 @@ int main()
     char buf[] = "YYYY/MM/DD";
     int y, m, d;
 
-    LInfo(("sizeof(int)=%d", sizeof(int)));
-    LInfo(("%02X", 10));
-    LInfo(("%04d/%02d/%02d", 2010, 3, 10));
+    INFO(("sizeof(int)=%d", sizeof(int)));
+    INFO(("%02X", 10));
+    INFO(("%04d/%02d/%02d", 2010, 3, 10));
 
     sprintf(buf, "%04d/%02d/%02d", 2010, 3, 10);
-    LDbg((buf));
+    DBG((buf));
     sprintf(buf, "%d/%d", 2010, 3);
-    LDbg((buf));
+    DBG((buf));
 
     sscanf("2010/3", "%d/%d", &y, &m);
-    LDbg(("%04d/%02d", y, m));
+    DBG(("%04d/%02d", y, m));
     sscanf("2010/4", "%d%*[^0-9]%d", &y, &m);
-    LDbg(("%04d/%02d", y, m));
+    DBG(("%04d/%02d", y, m));
 
     DebugCode (
-        LDbg(("DebugCode Block is Tested OK!\n"));
+        DBG(("DebugCode Block is Tested OK!\n"));
     )
 
     return 0;

@@ -35,7 +35,7 @@ enum {
     /// The maximum number of tasks required at any one time
     ///  during the execution of the program.
     /// @warning MUST BE ADJUSTED FOR EACH NEW PROJECT.
-    SCH_MAX_TASKS= 1
+    SCH_MAX_TASKS= 2
 };
 
 

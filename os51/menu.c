@@ -39,7 +39,7 @@ static void FunctionC();
 void MENU_CommandProcessor()
 {
     static bool first_time= true;
-    char ch= CONSOLE_NO_CHAR;
+    char ch= CON_NO_CHAR;
 
     if (first_time) {
         first_time= false;

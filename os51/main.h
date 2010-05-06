@@ -70,7 +70,7 @@ enum {
  * Error codes
  * @see PTTES, Ch14.
  */
-enum ErrorCode {
+typedef enum {
     EC_NO_ANY_ERROR,
     EC_SCH_TOO_MANY_TASKS,
     EC_SCH_CANNOT_DELETE_TASK,
@@ -97,7 +97,7 @@ enum ErrorCode {
     //EC_SPI_MAX1110_TIMEOUT= 33,
 
     //EC_ADC_MAX150_TIMEOUT= 44
-};
+} ErrorCode;
 
 #endif
 

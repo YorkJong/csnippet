@@ -2,12 +2,12 @@
  * @file queue.c
  *      Implementes a queue module, and that uses a circular array.
  * @author Jiang Yu-Kuan yukuan.jiang@gmail.com
- * @date 2006/05/07 (initial)
- * @date 2006/05/08 (last revision)
+ * @date 2006/05/07 (initial version)
+ * @date 2006/05/10 (last revision)
  * @version 2.0
  */
 #include "Queue.h"
-//#include <assert.h>
+#include <assert.h>
 
 
 /** Initilizes a queue.
@@ -25,13 +25,22 @@ void Q_init( Queue* q, QueueItem* buf, size_t buf_size )
 }
 
 
+/** Clear the queue */
+void Q_clear( Queue* q )
+{
+    q->first= 0;
+    q->end= 0;
+    q->count= 0;
+}
+
+
 /** Adds an item to the end of a queue.
  * @param[in,out] q the queue to add an item.
  * @param[in] i the added item.
  */
 void Q_add( Queue* q, QueueItem i )
 {
-    //assert (!Q_full(q));
+    assert (!Q_full(q));
 
     ++q->count;
     q->buf[q->end]= i;
@@ -46,12 +55,27 @@ void Q_add( Queue* q, QueueItem i )
 QueueItem Q_get( Queue* q )
 {
     QueueItem i;
-    //assert (!Q_empty(q));
+    assert (!Q_empty(q));
 
     --q->count;
     i= q->buf[q->first];
     q->first= (q->first+1) % q->buf_size;
     return i;
+}
+
+
+/** Rolls back a "get" operation.
+ * This cannot work correctly next to 'clear' operation.
+ * @return the previous character
+ */
+QueueItem Q_unget( Queue* q )
+{
+    ++q->count;
+    if (q->first == 0)
+        q->first= q->buf_size - 1;
+    else
+        q->first= (q->first-1) % q->buf_size;
+    return q->buf[q->first];
 }
 
 
@@ -61,7 +85,7 @@ QueueItem Q_get( Queue* q )
  */
 QueueItem Q_peek( const Queue* q )
 {
-    //assert (!Q_empty(q));
+    assert (!Q_empty(q));
 
     return q->buf[q->first];
 }

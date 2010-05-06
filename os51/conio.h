@@ -15,14 +15,14 @@
  * available in buffer
  */
 enum {
-    CONSOLE_NO_CHAR= 127
+    CON_NO_CHAR= 127
 };
 
 
-void CONSOLE_Init( uint16_t );
+void CON_Init( uint16_t );
 
 /// Must schedule or otherwise regularly call this function...
-void CONSOLE_Update();
+void CON_Update();
 
 int kbhit();
 int ungetch( int ch );

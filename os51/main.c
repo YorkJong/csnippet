@@ -21,11 +21,12 @@ void main()
     SCH_Init();
 
     // Set baud rate to 9600: generic 8051 version
-    CONSOLE_Init( 9600 );
+    // TIMING IS IN TICKS NOT MILLISECONDS (5 ms tick interval)
+    CON_Init( 9600 );
+
+    SCH_AddTask( CON_Update, 5, 2 );
 
     // We have to schedule this task (10x - 100x a second)
-    //
-    // TIMING IS IN TICKS NOT MILLISECONDS (5 ms tick interval)
     SCH_AddTask( MENU_CommandProcessor, 10, 2 );
 
     SCH_Start();

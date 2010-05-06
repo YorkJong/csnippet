@@ -25,9 +25,11 @@ typedef struct {
 
 
 void Q_init( Queue* q, QueueItem* buf, size_t buf_size );
+void Q_clear( Queue* );
 
 void Q_add( Queue*, QueueItem );
 QueueItem Q_get( Queue* );
+QueueItem Q_unget( Queue* );
 QueueItem Q_peek( const Queue* );
 
 size_t Q_size( const Queue* );

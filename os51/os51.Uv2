@@ -1,17 +1,19 @@
 ### uVision2 Project, (C) Keil Software
 ### Do not modify !
 
-Target (Target 1), 0x0000 // Tools: 'MCS-51'
+Target (os51), 0x0000 // Tools: 'MCS-51'
 
-Group (Source Group 1)
+Group (scheduler)
+Group (utility)
 
 File 1,1,<.\conio.c><conio.c> 0x0 
 File 1,1,<.\menu.c><menu.c> 0x0 
 File 1,1,<.\main.c><main.c> 0x0 
 File 1,1,<.\scheduler.c><scheduler.c> 0x0 
+File 2,1,<.\Queue.c><Queue.c> 0x0 
 
 
-Options 1,0,0  // Target 'Target 1'
+Options 1,0,0  // Target 'os51'
  Device (AT89C52)
  Vendor (Atmel)
  Cpu (IRAM(0-0xFF) IROM(0-0x1FFF) CLOCK(24000000))
@@ -36,7 +38,7 @@ Options 1,0,0  // Target 'Target 1'
  OrgReg (ÿAtmel\)
  TgStat=16
  OutDir (.\)
- OutName (IO_T2_T1)
+ OutName (os51)
  GenApp=1
  GenLib=0
  GenHex=1
@@ -118,7 +120,7 @@ Options 1,0,0  // Target 'Target 1'
   OPTDBG 509,-1,()()()()()()()()()() (BIN\MON51.DLL)()()()
  FLASH1 { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  FLASH2 ()
- FLASH3 ()
+ FLASH3 ("" ())
  FLASH4 ()
 EndOpt
 

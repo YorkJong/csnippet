@@ -20,9 +20,6 @@
 #include "scheduler.h"
 
 
-/// The array of tasks
-Task gSCH_tasks[SCH_MAX_TASKS];
-
 /// Used to display the error code
 /// @see main.h for details of error codes
 /// @see port.h for details of the error port
@@ -31,6 +28,9 @@ uint8_t gErrorCode= EC_NO_ANY_ERROR;
 
 static void SCH_GoToSleep();
 
+
+/// The array of tasks
+static Task _SCH_tasks[SCH_MAX_TASKS];
 
 /// Keeps track of time since last error was recorded (see below)
 static uint16_t _errorTickCount;
@@ -113,17 +113,17 @@ void SCH_Update() interrupt INTERRUPT_Timer_2_Overflow
     // NOTE: calculations are in *TICKS* (not milliseconds)
     for (i = 0; i < SCH_MAX_TASKS; i++) {
         // Check if there is a task at this location
-        if (gSCH_tasks[i].routine != 0) {
-            if (gSCH_tasks[i].countdown == 0) {
+        if (_SCH_tasks[i].routine != 0) {
+            if (_SCH_tasks[i].countdown == 0) {
                 // The task is due to run
-                gSCH_tasks[i].due= true;
+                _SCH_tasks[i].due= true;
 
                 // Schedule periodic tasks to run again
-                gSCH_tasks[i].countdown = gSCH_tasks[i].period;
+                _SCH_tasks[i].countdown = _SCH_tasks[i].period;
             }
             else {
                 // Not yet ready to run: just decrement count down a tick
-                gSCH_tasks[i].countdown--;
+                _SCH_tasks[i].countdown--;
             }
         }
     }
@@ -141,14 +141,14 @@ void SCH_DispatchTasks()
 
     // Dispatches (runs) the next task (if one is ready)
     for (i = 0; i < SCH_MAX_TASKS; i++) {
-        if (gSCH_tasks[i].due) {
-            (*gSCH_tasks[i].routine)();  // Run the task
+        if (_SCH_tasks[i].due) {
+            (*_SCH_tasks[i].routine)();  // Run the task
 
-            gSCH_tasks[i].due= false;
+            _SCH_tasks[i].due= false;
 
             // Periodic tasks will automatically run again:
             // if this is a 'one shot' task, remove it from the array.
-            if (gSCH_tasks[i].period == 0) {
+            if (_SCH_tasks[i].period == 0) {
                 SCH_DeleteTask(i);
             }
         }
@@ -205,7 +205,7 @@ uint8_t SCH_AddTask( const void (*fn)(), uint16_t delay, uint16_t period )
 
     // First find a gap in the array (if there is one)
     for (i= 0; i<SCH_MAX_TASKS; ++i) {
-        if (gSCH_tasks[i].routine == 0)
+        if (_SCH_tasks[i].routine == 0)
             break;
     }
 
@@ -222,10 +222,10 @@ uint8_t SCH_AddTask( const void (*fn)(), uint16_t delay, uint16_t period )
 
     // If we're here, there is a space in the task array
 
-    gSCH_tasks[i].routine= fn;
-    gSCH_tasks[i].countdown= delay;
-    gSCH_tasks[i].period= period;
-    gSCH_tasks[i].due= false;
+    _SCH_tasks[i].routine= fn;
+    _SCH_tasks[i].countdown= delay;
+    _SCH_tasks[i].period= period;
+    _SCH_tasks[i].due= false;
 
     return i; // return position of task (to allow later deletion)
 }
@@ -243,7 +243,7 @@ SCH_Status SCH_DeleteTask( uint8_t idx )
 {
     SCH_Status status;
 
-    if (gSCH_tasks[idx].routine == 0) {
+    if (_SCH_tasks[idx].routine == 0) {
         // No task at this location...
 
         // Set the global error variable
@@ -256,10 +256,10 @@ SCH_Status SCH_DeleteTask( uint8_t idx )
         status = SS_NORMAL;
     }
 
-    gSCH_tasks[idx].routine= 0;
-    gSCH_tasks[idx].countdown= 0;
-    gSCH_tasks[idx].period= 0;
-    gSCH_tasks[idx].due= false;
+    _SCH_tasks[idx].routine= 0;
+    _SCH_tasks[idx].countdown= 0;
+    _SCH_tasks[idx].period= 0;
+    _SCH_tasks[idx].due= false;
 
     return status;
 }

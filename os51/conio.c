@@ -2,8 +2,7 @@
  * @file conio.c
  *      Console versions of common I/O functions.
  * @note Uses the USART, and Pins 3.1 (Tx) and 3.0 (Rx).
- * @note CONSOLE_Init(), CONSOLE_Update(), CONSOLE_SendChar(),
-         and CONSOLE_ReceiveChar()
+ * @note CONSOLE_Init(), CONSOLE_Update(), CONSOLE_SendChar()
         should be modified for porting to other platform.
  * @see PATTERNS FOR TIME-TRIGGERED EMBEDDED SYSTEMS by Michael J. Pont, Ch18
  * @author Jiang Yu-Kuan, yukuan.jiang@gmail.com
@@ -13,6 +12,7 @@
 #include "main.h"
 #include "conio.h"
 #include <stdio.h>
+#include "Queue.h"
 
 
 extern uint8_t gErrorCode;
@@ -22,7 +22,6 @@ static void CONSOLE_WriteCharToBuffer( char );
 static char CONSOLE_GetCharFromBuffer();
 
 static void CONSOLE_SendChar( char );
-static void CONSOLE_ReceiveChar();
 
 
 enum {
@@ -39,15 +38,8 @@ enum {
 
 ///@name module variables
 //@{
-static uint8_t _inReadIndex;     ///< Data in buffer that has been read
-static uint8_t _inWaitingIndex;  ///< Data in buffer not yet read
-
-static uint8_t _outWrittenIndex;  ///< Data in buffer that has been written
-static uint8_t _outWaitingIndex;  ///< Data in buffer not yet written
-
-
-static uint8_t _recvBuffer[RECV_BUFFER_LENGTH];
-static uint8_t _tranBuffer[TRAN_BUFFER_LENGTH];
+static Queue _recvQueue;
+static Queue _tranQueue;
 //@}
 
 
@@ -78,7 +70,7 @@ char _getkey ()
 int kbhit()
 {
     CONSOLE_Update();
-    return _inWaitingIndex - _inReadIndex;
+    return Q_size( &_recvQueue );
 }
 
 
@@ -87,6 +79,9 @@ int kbhit()
  */
 void CONSOLE_Init( uint16_t baud )
 {
+    static uint8_t recvBuf[RECV_BUFFER_LENGTH];
+    static uint8_t tranBuf[TRAN_BUFFER_LENGTH];
+
     PCON &= 0x7F;   // Set SMOD bit to 0 (don't double baud rates)
 
     //  Receiver enabled.
@@ -105,11 +100,10 @@ void CONSOLE_Init( uint16_t baud )
     TR1 = 1;  // Run the timer
     TI = 1;   // Send first character (dummy)
 
-    // Set up the buffers for reading and writing
-    _inReadIndex = 0;
-    _inWaitingIndex = 0;
-    _outWrittenIndex = 0;
-    _outWaitingIndex = 0;
+    // Initializes queues
+
+    Q_init( &_recvQueue, recvBuf, RECV_BUFFER_LENGTH );
+    Q_init( &_tranQueue, tranBuf, TRAN_BUFFER_LENGTH );
 
     printf("Serial OK\n");
 
@@ -124,24 +118,19 @@ void CONSOLE_Init( uint16_t baud )
  */
 void CONSOLE_Update()
 {
-    // Deal with transmit bytes here
-    // Is there any data ready to send?
-    if (_outWrittenIndex < _outWaitingIndex) {
-        if (_tranBuffer[_outWrittenIndex] == '\n') //JYK
+    if (!Q_empty(&_tranQueue)) {
+        if (Q_peek(&_tranQueue) == '\n')
             CONSOLE_SendChar('\r');
-        CONSOLE_SendChar(_tranBuffer[_outWrittenIndex]);
-
-        _outWrittenIndex++;
-    }
-    else {
-        // No data to send - just reset the buffer index
-        _outWaitingIndex = 0;
-        _outWrittenIndex = 0;
+        CONSOLE_SendChar(Q_get(&_tranQueue));
     }
 
     // Is data ready to be read into the received buffer?
-    if (RI == 1)
-        CONSOLE_ReceiveChar();
+    if (RI == 1) {
+        // Read the data from USART buffer
+        if (!Q_full(&_recvQueue))
+        	Q_add(&_recvQueue, SBUF);
+        RI = 0;  // Clear RT flag
+    }
 }
 
 
@@ -151,18 +140,10 @@ void CONSOLE_Update()
  */
 static void CONSOLE_WriteCharToBuffer( char ch )
 {
-    // Write to the buffer *only* if there is space
-    if (_outWaitingIndex < TRAN_BUFFER_LENGTH) {
-        _tranBuffer[_outWaitingIndex] = ch;
-        _outWaitingIndex++;
-    }
-    else {
-        // Write buffer is full
-        // Increase the size of TRAN_BUFFER_LENGTH
-        // or increase the rate at which UART 'update' function is called
-        // or reduce the amount of data sent to PC
+    if (!Q_full(&_tranQueue))
+		Q_add(&_tranQueue, ch);
+    else
         gErrorCode = EC_USART_WRITE_CHAR;
-    }
 }
 
 
@@ -176,14 +157,8 @@ static char CONSOLE_GetCharFromBuffer()
 {
     char ch = CONSOLE_NO_CHAR;
 
-    // If there is new data in the buffer
-    if (_inReadIndex < _inWaitingIndex) {
-        ch = _recvBuffer[_inReadIndex];
-
-        if (_inReadIndex < RECV_BUFFER_LENGTH) {
-            _inReadIndex++;
-        }
-    }
+    if (!Q_empty(&_recvQueue))
+        ch= Q_get(&_recvQueue);
 
     return ch;
 }
@@ -244,23 +219,4 @@ static void CONSOLE_SendChar( char ch )
 
     TI = 0;
     SBUF = ch;
-}
-
-
-static void CONSOLE_ReceiveChar()
-{
-    // Want to read into index 0, if old data has been read
-    // (simple ~circular buffer)
-    if (_inWaitingIndex == _inReadIndex) {
-        _inWaitingIndex = 0;
-        _inReadIndex = 0;
-    }
-
-    // Read the data from USART buffer
-    _recvBuffer[_inWaitingIndex] = SBUF;
-
-    if (_inWaitingIndex < RECV_BUFFER_LENGTH)
-        _inWaitingIndex++; // Increment without overflowing buffer
-
-    RI = 0;  // Clear RT flag
 }

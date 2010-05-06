@@ -1,3 +1,16 @@
+[utility(v3)20060518.zip]
+ 1. Renamed functions
+    Q_add -> Q_put
+    Q_peek -> Q_first
+ 2. Added Q_last(.)
+ 3. Refactored Q_first(.)
+
+[utility(v2)20060510.zip]
+ 1. Added Q_peek(.) to Queue module
+
+[utility(v1)20060508.zip]
+ 1. Added Queue module: Queue.c, Queue.h, and Queue_test.c
+
 [utility(v8)20050913.rar]
  1. Re-commented TU_ASSERT(.):ToyUint.h
  2. Added ASSERT(.), an modified version of ANSI C's assert, into debug.h

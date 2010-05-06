@@ -2,8 +2,8 @@
  * @file queue.h
  *      Interface of a queue module.
  * @author Jiang Yu-Kuan yukuan.jiang@gmail.com
- * @date 2006/05/07
- * @version 1.0
+ * @date 2006/05/18
+ * @version 2.0
  */
 #ifndef _QUEUE_H_
 #define _QUEUE_H_
@@ -27,15 +27,17 @@ typedef struct {
 void Q_init( Queue* q, QueueItem* buf, size_t buf_size );
 void Q_clear( Queue* );
 
-void Q_add( Queue*, QueueItem );
+void Q_put( Queue*, QueueItem );
 QueueItem Q_get( Queue* );
+
 QueueItem Q_unget( Queue* );
-QueueItem Q_peek( const Queue* );
+
+QueueItem Q_first( const Queue* );
+QueueItem Q_last( const Queue* );
 
 size_t Q_size( const Queue* );
 bool Q_empty( const Queue* );
 bool Q_full( const Queue* );
-
 
 #endif // _QUEUE_H_
 

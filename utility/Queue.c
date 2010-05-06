@@ -3,7 +3,7 @@
  *      Implementes a queue module, and that uses a circular array.
  * @author Jiang Yu-Kuan yukuan.jiang@gmail.com
  * @date 2006/05/07 (initial version)
- * @date 2006/05/10 (last revision)
+ * @date 2006/05/18 (last revision)
  * @version 2.0
  */
 #include "Queue.h"
@@ -34,11 +34,11 @@ void Q_clear( Queue* q )
 }
 
 
-/** Adds an item to the end of a queue.
+/** Puts an item to the end of a queue.
  * @param[in,out] q the queue to add an item.
  * @param[in] i the added item.
  */
-void Q_add( Queue* q, QueueItem i )
+void Q_put( Queue* q, QueueItem i )
 {
     assert (!Q_full(q));
 
@@ -74,7 +74,7 @@ QueueItem Q_unget( Queue* q )
     if (q->first == 0)
         q->first= q->buf_size - 1;
     else
-        q->first= (q->first-1) % q->buf_size;
+        --q->first;
     return q->buf[q->first];
 }
 
@@ -83,11 +83,28 @@ QueueItem Q_unget( Queue* q )
  * @param[in] q the queue to get an item.
  * @return the peeked item
  */
-QueueItem Q_peek( const Queue* q )
+QueueItem Q_first( const Queue* q )
 {
     assert (!Q_empty(q));
 
     return q->buf[q->first];
+}
+
+
+/** Peeks the last item of a queue.
+ * @param[in] q the queue to get an item.
+ * @return the peeked item
+ */
+QueueItem Q_last( const Queue* q )
+{
+    Index i;
+    assert (!Q_empty(q));
+
+    if (q->end == 0)
+        i= q->buf_size - 1;
+    else
+        i= q->end - 1;
+    return q->buf[i];
 }
 
 

@@ -1,0 +1,7 @@
+"conio.obj",
+"menu.obj",
+"main.obj",
+"scheduler.obj" 
+TO "IO_T2_T1" 
+RAMSIZE(256) 
+OVERLAY (main ~ (MENU_CommandProcessor), SCH_DispatchTasks ! (MENU_CommandProcessor)) 

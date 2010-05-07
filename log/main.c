@@ -9,9 +9,9 @@ int main()
     char buf[] = "YYYY/MM/DD";
     int y, m, d;
 
-    INFO(("sizeof(int)=%d", sizeof(int)));
-    INFO(("%02X", 10));
-    INFO(("%04d/%02d/%02d", 2010, 3, 10));
+    INF(("sizeof(int)=%d", sizeof(int)));
+    INF(("%02X", 10));
+    INF(("%04d/%02d/%02d", 2010, 3, 10));
 
     sprintf(buf, "%04d/%02d/%02d", 2010, 3, 10);
     DBG((buf));

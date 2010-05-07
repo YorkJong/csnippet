@@ -16,12 +16,12 @@
 
 #define LL_TRACE 4
 #define LL_DEBUG 3
-#define LL_INFO  2
+#define LL_INF  2
 #define LL_ERROR 1
 #define LL_OFF   0
 
 #if !defined(LOG_LEVEL)
-    #define LOG_LEVEL   LL_INFO
+    #define LOG_LEVEL   LL_INF
 #endif
 
 #define LOG(tag, args)  \
@@ -45,10 +45,10 @@
     #define DBG(args)
 #endif
 
-#if LOG_LEVEL >= LL_INFO
-    #define INFO(args)  LOG("[INF] ", args)
+#if LOG_LEVEL >= LL_INF
+    #define INF(args)  LOG("[INF] ", args)
 #else
-    #define INFO(args)
+    #define INF(args)
 #endif
 
 #if LOG_LEVEL >= LL_ERROR

@@ -30,6 +30,9 @@ utest: $(MODULES)
 
 all: $(TARGETS)
 
+Bitmap_test: Bitmap
+	$@
+
 ToyUnit: $(ToyUnit_OBJS)
 	$(CC) -o $@_test $(CFLAGS) $(ToyUnit_OBJS)
 

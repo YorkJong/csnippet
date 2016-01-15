@@ -2,9 +2,9 @@
  * @file Bitmap.c
  *      This module provides \em bitmap operations for byte-array.
  *      The bitmap is implemented with byte-array, each byte keeps 8 bits.
- * @author Jiang Yu-Kuan, yukuan.jiang@gmail.com
- * @date 2005/3/11 (initial)
- * @date 2005/5/14 (last revise)
+ * @author Jiang Yu-Kuan <yukuan.jiang@gmail.com>
+ * @date 2005/03/11 (initial)
+ * @date 2016/01/16 (last revise)
  * @version 2.0
  * @see Bitmap.h
  * @see Bitmap_test.c
@@ -14,9 +14,12 @@
 #include <assert.h>
 #include <stddef.h>
 
-enum {
-    BYTE_BITS= 8 ///< the total bits of a byte
-};
+
+/// Returns the slot index of a given bit index
+#define BITSLOT(b)  ((b) / ELEM_BITS)
+
+/// Returns the bit mask of a given bit index
+#define BITMASK(b)  (1 << ((b) % ELEM_BITS))
 
 
 //-----------------------------------------------------------------------------
@@ -30,7 +33,7 @@ enum {
  */
 void SetBit( Byte a[], Index i )
 {
-    a[i/BYTE_BITS] |= (1 << (i%BYTE_BITS));
+    a[BITSLOT(i)] |= BITMASK(i);
 }
 
 
@@ -41,7 +44,7 @@ void SetBit( Byte a[], Index i )
  */
 void ClrBit( Byte a[], Index i )
 {
-    a[i/BYTE_BITS] &= ~(1 << (i%BYTE_BITS));
+    a[BITSLOT(i)] &= ~BITMASK(i);
 }
 
 
@@ -51,8 +54,7 @@ void ClrBit( Byte a[], Index i )
  */
 Bit GetBit( const Byte a[], Index i )
 {
-    Byte r= i%BYTE_BITS;
-    return (a[i/BYTE_BITS] & (1<<r))  >>  r;
+    return (a[BITSLOT(i)] & BITMASK(i))  !=  0;
 }
 
 
@@ -67,20 +69,20 @@ size_t RisenBitCount( const Byte a[], Index end )
 {
     Index i; // index of byte in the byte-array
     Index j; // index of bit in a byte
-    const Index lastByteIdx= (end-1)/BYTE_BITS;
+    const Index lastByteIdx= (end-1)/ELEM_BITS;
     size_t restBits= end;
     size_t result= 0;
 
     for (i= 0; i<=lastByteIdx; i++) {
         if (a[i] != 0) {
             Byte b= a[i];
-            Byte bits= (restBits<BYTE_BITS) ? restBits : BYTE_BITS;
+            Byte bits= (restBits<ELEM_BITS) ? restBits : ELEM_BITS;
             for (j= 0; j<bits; j++) {
                 result += b&0x1;
                 b >>= 1;
             }
         }
-        restBits -= BYTE_BITS;
+        restBits -= ELEM_BITS;
     }
     return result;
 }
@@ -111,18 +113,18 @@ Index FindRisenBit( const Byte a[], Index begin, Index end )
 {
     Index i; // index of byte in the byte-array
     Index j; // index of bit int a byte
-    const Index beginByteIdx= begin/BYTE_BITS;
-    const Index lastByteIdx= (end-1)/BYTE_BITS;
+    const Index beginByteIdx= begin/ELEM_BITS;
+    const Index lastByteIdx= (end-1)/ELEM_BITS;
     Byte r;  // remainder
 
     assert (begin < end);
 
     // To search the prefix head bits, which
     //   may be a whole or non-wole byte
-    r= begin%BYTE_BITS;
+    r= begin%ELEM_BITS;
     if (a[beginByteIdx] != 0) {
         Byte b= a[beginByteIdx] >> r;
-        for (j= r; j<BYTE_BITS; j++) {
+        for (j= r; j<ELEM_BITS; j++) {
             if (b & 0x1) {
                 assert ((begin+j-r) < end);
                 return begin + j - r;
@@ -136,13 +138,13 @@ Index FindRisenBit( const Byte a[], Index begin, Index end )
         if (a[i] != 0) {
             Byte b= a[i];
             size_t restBits= (end - begin)
-                             - (i-(beginByteIdx+1)) * BYTE_BITS
-                             - (BYTE_BITS - r);
-            Byte bits= (restBits<BYTE_BITS) ? restBits : BYTE_BITS;
+                             - (i-(beginByteIdx+1)) * ELEM_BITS
+                             - (ELEM_BITS - r);
+            Byte bits= (restBits<ELEM_BITS) ? restBits : ELEM_BITS;
             for (j= 0; j<bits; j++) {
                 if (b & 0x1) {
-                    assert ((i*BYTE_BITS + j)<end);
-                    return i*BYTE_BITS + j;
+                    assert ((i*ELEM_BITS + j)<end);
+                    return i*ELEM_BITS + j;
                 }
                 b >>= 1;
             }

@@ -1,18 +1,19 @@
 /**
  * @file Bitmap_test.c
  *      Unit Test for Bitmap operations.
- * @author Jiang Yu-Kuan, yukuan.jiang@gmail.com
- * @date 2005/3/13 (initial)
- * @date 2005/5/13 (last revise)
+ * @author Jiang Yu-Kuan <yukuan.jiang@gmail.com>
+ * @date 2005/03/13 (initial)
+ * @date 2016/01/15 (last revise)
  * @see Bitmap.h
  * @see Bitmap.c
  */
 #include "ToyUnit.h"
 #include "Bitmap.h"
 
+
 int main()
 {
-    Byte a[3]= {0x00, 0x00, 0x00};
+    Byte a[BITMAP_NSLOTS(8*3)]= {0x00, 0x00, 0x00};
 
     SetByteBits(a, 0);  // {0xff, 0x00, 0x00}
     SetByteBits(a, 1);  // {0xff, 0xff, 0x00}

@@ -1,9 +1,9 @@
 /**
  * @file Bitmap.h
  *      This module provides \em bitmap operations for byte-array.
- * @author Jiang Yu-Kuan, yukuan.jiang@gmail.com
- * @date 2005/3/12 (initial)
- * @date 2005/4/19 (last revise)
+ * @author Jiang Yu-Kuan <yukuan.jiang@gmail.com>
+ * @date 2005/03/12 (initial)
+ * @date 2016/01/15 (last revise)
  * @version 1.5
  * @see Bitmap.c
  * @see Bitmap_test.c
@@ -32,6 +32,14 @@ void ClrByteBits( Byte a[], Index i );
 
 Index FindRisenByte( const Byte a[], Index begin, Index end );
 Index FindRisenByteRingedly( const Byte a[], Index begin, Index end );
+
+
+enum {
+    ELEM_BITS = 8  ///< the total bits of an element
+};
+
+/// Returns total slots of a given number of bits.
+#define BITMAP_NSLOTS(nb)    (((nb) + ELEM_BITS - 1) / ELEM_BITS)
 
 
 #endif //  _BITMAP_H_

@@ -35,6 +35,7 @@ typedef struct {
 
 void Bitmap_init(Bitmap*, Elem a[], size_t n);
 
+size_t Bitmap_totalBits(const Bitmap*);
 void Bitmap_setBit(Bitmap*, Index i);
 void Bitmap_clrBit(Bitmap*, Index i);
 Bit Bitmap_getBit(const Bitmap*, Index i);

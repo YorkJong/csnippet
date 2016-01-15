@@ -10,13 +10,18 @@
 #include "ToyUnit.h"
 #include "Bitmap.h"
 
+/// Returns the number of elements of an array
+#define ElemsOfArray(x) (sizeof(x) / sizeof(x[0]))
+
 
 int main()
 {
     Bitmap b;
     Byte a[BITMAP_NSLOTS(8*3)]= {0x00, 0x00, 0x00};
 
-    Bitmap_init(&b, a, 8*3);
+    Bitmap_init(&b, a, ElemsOfArray(a));
+    TU_ASSERT("t0-1", a[0]==0x00);
+    TU_ASSERT("t0-2", Bitmap_totalBits(&b) == 8*3);
 
     Bitmap_setByteBits(&b, 0);  // {0xff, 0x00, 0x00}
     Bitmap_setByteBits(&b, 1);  // {0xff, 0xff, 0x00}

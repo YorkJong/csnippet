@@ -38,6 +38,13 @@ void Bitmap_init(Bitmap* b, Elem a[], size_t n)
 }
 
 
+/** Returns the total bits of the bitmap. */
+size_t Bitmap_totalBits(const Bitmap* b)
+{
+    return ELEM_BITS * b->n;
+}
+
+
 /** Sets bit[i] to 1
  * @param[out] b the bitmap
  * @param[in] i the index of the \em bit to be set
@@ -45,6 +52,8 @@ void Bitmap_init(Bitmap* b, Elem a[], size_t n)
  */
 void Bitmap_setBit(Bitmap* b, Index i)
 {
+    ASSERT_OP (i, <, Bitmap_totalBits(b));
+
     b->a[BITSLOT(i)] |= BITMASK(i);
 }
 
@@ -56,6 +65,8 @@ void Bitmap_setBit(Bitmap* b, Index i)
  */
 void Bitmap_clrBit(Bitmap* b, Index i)
 {
+    ASSERT_OP (i, <, Bitmap_totalBits(b));
+
     b->a[BITSLOT(i)] &= ~BITMASK(i);
 }
 
@@ -66,6 +77,8 @@ void Bitmap_clrBit(Bitmap* b, Index i)
  */
 Bit Bitmap_getBit(const Bitmap* b, Index i)
 {
+    ASSERT_OP (i, <, Bitmap_totalBits(b));
+
     return (b->a[BITSLOT(i)] & BITMASK(i))  !=  0;
 }
 

@@ -16,7 +16,8 @@ Queue_OBJS = Queue_test.o Queue.o
 
 W0 = -Wall -Wextra -pedantic -Wdeclaration-after-statement -Wundef -Wwrite-strings
 W1 = -Wbad-function-cast -Wcast-qual -Wredundant-decls #-Wunreachable-code
-CFLAGS = -std=c9x -DDEBUG $(W0) $(W1) -I"./include"
+W2 = -Wno-unused-local-typedefs
+CFLAGS = -std=c9x -DDEBUG $(W0) $(W1) $(W2) -I"./include"
 
 
 utest: $(MODULES)

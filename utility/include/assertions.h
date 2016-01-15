@@ -69,6 +69,7 @@
 
 /// macro for compile-time assertions
 #define cassert(exp) typedef char __cassert[(exp)?1:-1]
+//#define cassert(exp) extern char _cassert[exp]
 
 //------------------------------------------------------------------------------
 

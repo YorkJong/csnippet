@@ -12,34 +12,44 @@
 #define _BITMAP_H_
 
 
-#include "platform.h"
 #include <stddef.h>
 
+#include "platform.h"
+
+
+/// Returns total slots of a given number of bits.
+#define BITMAP_NSLOTS(nb)    (((nb) + ELEM_BITS - 1) / ELEM_BITS)
+
 typedef bool Bit;   ///< Bit type for Bitmap
-
-void SetBit( Byte a[], Index i );
-void ClrBit( Byte a[], Index i );
-Bit GetBit( const Byte a[], Index i );
-
-size_t RisenBitCount( const Byte a[], Index end );
-size_t SunkBitCount( const Byte a[], Index end );
-
-Index FindRisenBit( const Byte a[], Index begin, Index end );
-Index FindRisenBitRingedly( const Byte a[], Index begin, Index end );
-
-void SetByteBits( Byte a[], Index i );
-void ClrByteBits( Byte a[], Index i );
-
-Index FindRisenByte( const Byte a[], Index begin, Index end );
-Index FindRisenByteRingedly( const Byte a[], Index begin, Index end );
-
+typedef uint8_t Elem;
 
 enum {
     ELEM_BITS = 8  ///< the total bits of an element
 };
 
-/// Returns total slots of a given number of bits.
-#define BITMAP_NSLOTS(nb)    (((nb) + ELEM_BITS - 1) / ELEM_BITS)
+
+typedef struct {
+    Elem *a;    ///< the pointer to an byte array
+    size_t n;       ///< the number of elements of the array
+} Bitmap;
+
+void Bitmap_init(Bitmap*, Elem a[], size_t n);
+
+void Bitmap_setBit(Bitmap*, Index i);
+void Bitmap_clrBit(Bitmap*, Index i);
+Bit Bitmap_getBit(const Bitmap*, Index i);
+
+size_t Bitmap_risenBitCount(const Bitmap*, Index end);
+size_t Bitmap_sunkBitCount(const Bitmap*, Index end);
+
+Index Bitmap_findRisenBit(const Bitmap*, Index begin, Index end);
+Index Bitmap_findRisenBitRingedly(const Bitmap*, Index begin, Index end);
+
+void Bitmap_setByteBits(Bitmap*, Index i);
+void Bitmap_clrByteBits(Bitmap*, Index i);
+
+Index Bitmap_findRisenByte(const Bitmap*, Index begin, Index end);
+Index Bitmap_findRisenByteRingedly(const Bitmap*, Index begin, Index end);
 
 
 #endif //  _BITMAP_H_

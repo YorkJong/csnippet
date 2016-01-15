@@ -9,10 +9,10 @@
  * @see Bitmap.h
  * @see Bitmap_test.c
  */
+#include "assertions.h"
+
 #include "platform.h"
 #include "Bitmap.h"
-#include <assert.h>
-#include <stddef.h>
 
 
 /// Returns the slot index of a given bit index
@@ -26,60 +26,72 @@
 // Bit-wise operators
 //-----------------------------------------------------------------------------
 
-/** Sets bit[i] to 1
- * @param a a byte-array that stores the bitmap
- * @param i the index of the \em bit to be set
- * @see ClrBit()
+/** Initializes the bitmap.
+ * @param[out] b the bitmap
+ * @param[in] a the pointer to an Elem array
+ * @param[in] n the number of elements of the array
  */
-void SetBit( Byte a[], Index i )
+void Bitmap_init(Bitmap* b, Elem a[], size_t n)
 {
-    a[BITSLOT(i)] |= BITMASK(i);
+    b->a = a;
+    b->n = n;
+}
+
+
+/** Sets bit[i] to 1
+ * @param[out] b the bitmap
+ * @param[in] i the index of the \em bit to be set
+ * @see Bitmap_clrBit()
+ */
+void Bitmap_setBit(Bitmap* b, Index i)
+{
+    b->a[BITSLOT(i)] |= BITMASK(i);
 }
 
 
 /** Clears bit[i] to 0
- * @param a a byte-array that stores the bitmap
- * @param i the index of the cleared \em bit
- * @see SetBit()
+ * @param[out] b the bitmap
+ * @param[in] i the index of the cleared \em bit
+ * @see Bitmap_setBit()
  */
-void ClrBit( Byte a[], Index i )
+void Bitmap_clrBit(Bitmap* b, Index i)
 {
-    a[BITSLOT(i)] &= ~BITMASK(i);
+    b->a[BITSLOT(i)] &= ~BITMASK(i);
 }
 
 
 /** Gets bit[i]
- * @param a a byte-array that stores the bitmap
- * @param i the index of the gotten bit
+ * @param[in] b the bitmap
+ * @param[in] i the index of the gotten bit
  */
-Bit GetBit( const Byte a[], Index i )
+Bit Bitmap_getBit(const Bitmap* b, Index i)
 {
-    return (a[BITSLOT(i)] & BITMASK(i))  !=  0;
+    return (b->a[BITSLOT(i)] & BITMASK(i))  !=  0;
 }
 
 
 /** Counts the total risen bit (value=1)
  *      in the range [\em 0, \a end) of a give bitmap.
- * @param a a byte-array that stores the given bitmap
+ * @param b the bitmap
  * @param end the \em limit index of the counted bits (= \em last+1).
  * @return the count result
- * @see SunkBitCount()
+ * @see Bitmap_sunkBitCount()
  */
-size_t RisenBitCount( const Byte a[], Index end )
+size_t Bitmap_risenBitCount(const Bitmap* b, Index end)
 {
     Index i; // index of byte in the byte-array
     Index j; // index of bit in a byte
-    const Index lastByteIdx= (end-1)/ELEM_BITS;
-    size_t restBits= end;
-    size_t result= 0;
+    const Index lastByteIdx = (end-1)/ELEM_BITS;
+    size_t restBits = end;
+    size_t result = 0;
 
-    for (i= 0; i<=lastByteIdx; i++) {
-        if (a[i] != 0) {
-            Byte b= a[i];
-            Byte bits= (restBits<ELEM_BITS) ? restBits : ELEM_BITS;
-            for (j= 0; j<bits; j++) {
-                result += b&0x1;
-                b >>= 1;
+    for (i=0; i<=lastByteIdx; i++) {
+        if (b->a[i] != 0) {
+            Byte byte = b->a[i];
+            Byte bits = (restBits<ELEM_BITS) ? restBits : ELEM_BITS;
+            for (j=0; j<bits; j++) {
+                result += byte & 0x1;
+                byte >>= 1;
             }
         }
         restBits -= ELEM_BITS;
@@ -90,63 +102,63 @@ size_t RisenBitCount( const Byte a[], Index end )
 
 /** Counts the total sunk bit (value=0)
  *      in the range [\em 0, \a end) of a give bitmap.
- * @param a a byte-array that stores the given bitmap
+ * @param b the bitmap
  * @param end the \em limit index of the counted bits (= \em last+1).
  * @return the count result
- * @see RisenBitCount()
+ * @see Bitmap_risenBitCount()
  */
-size_t SunkBitCount( const Byte a[], Index end )
+size_t Bitmap_sunkBitCount(const Bitmap* b, Index end)
 {
-    return end - RisenBitCount(a, end);
+    return end - Bitmap_risenBitCount(b, end);
 }
 
 
 /** Finds the 1st risen bit (value=1)
  *      in the range [\a begin, \a end) of a give bitmap.
- * @param a a byte-array that stores the given bitmap
+ * @param b the bitmap
  * @param begin the index of the \a begin search bit
  * @param end the \em limit index of the searched bits (= \em last+1).
  * @return the index of the found risen bit;
  * @return \a end if not found
  */
-Index FindRisenBit( const Byte a[], Index begin, Index end )
+Index Bitmap_findRisenBit(const Bitmap* b, Index begin, Index end)
 {
     Index i; // index of byte in the byte-array
     Index j; // index of bit int a byte
-    const Index beginByteIdx= begin/ELEM_BITS;
-    const Index lastByteIdx= (end-1)/ELEM_BITS;
+    const Index beginByteIdx = begin/ELEM_BITS;
+    const Index lastByteIdx = (end-1)/ELEM_BITS;
     Byte r;  // remainder
 
     assert (begin < end);
 
     // To search the prefix head bits, which
     //   may be a whole or non-wole byte
-    r= begin%ELEM_BITS;
-    if (a[beginByteIdx] != 0) {
-        Byte b= a[beginByteIdx] >> r;
-        for (j= r; j<ELEM_BITS; j++) {
-            if (b & 0x1) {
+    r = begin%ELEM_BITS;
+    if (b->a[beginByteIdx] != 0) {
+        Byte byte = b->a[beginByteIdx] >> r;
+        for (j=r; j<ELEM_BITS; j++) {
+            if (byte & 0x1) {
                 assert ((begin+j-r) < end);
                 return begin + j - r;
             }
-            b >>= 1;
+            byte >>= 1;
         }
     }
 
     // To search the bits of body whole-bytes and tail bits.
-    for (i= beginByteIdx+1; i<=lastByteIdx; i++) {
-        if (a[i] != 0) {
-            Byte b= a[i];
-            size_t restBits= (end - begin)
+    for (i=beginByteIdx+1; i<=lastByteIdx; i++) {
+        if (b->a[i] != 0) {
+            Byte byte = b->a[i];
+            size_t restBits = (end - begin)
                              - (i-(beginByteIdx+1)) * ELEM_BITS
                              - (ELEM_BITS - r);
-            Byte bits= (restBits<ELEM_BITS) ? restBits : ELEM_BITS;
-            for (j= 0; j<bits; j++) {
-                if (b & 0x1) {
+            Byte bits = (restBits<ELEM_BITS) ? restBits : ELEM_BITS;
+            for (j=0; j<bits; j++) {
+                if (byte & 0x1) {
                     assert ((i*ELEM_BITS + j)<end);
                     return i*ELEM_BITS + j;
                 }
-                b >>= 1;
+                byte >>= 1;
             }
         }
     }
@@ -158,17 +170,17 @@ Index FindRisenBit( const Byte a[], Index begin, Index end )
  *      - It first searches the bits in [\a begin, \a end);
  *      - if not found, re-searches the bits in [\a 0, \a begin).
  *
- * @param a a byte-array that stores the given ringed bitmap
+ * @param b the bitmap
  * @param begin the index of the \a begin search bit
  * @param end the \em limit index of the searched bits (= \em last+1).
  * @return the index of the found risen bit;
  * @return \a end if not found
  */
-Index FindRisenBitRingedly( const Byte a[], Index begin, Index end )
+Index Bitmap_findRisenBitRingedly(const Bitmap* b, Index begin, Index end)
 {
-    Index i= FindRisenBit( a, begin, end );
+    Index i = Bitmap_findRisenBit(b, begin, end);
     if (i == end) {
-        i= FindRisenBit( a, 0, begin );
+        i = Bitmap_findRisenBit(b, 0, begin);
         if (i == begin)
             return end;
     }
@@ -181,40 +193,47 @@ Index FindRisenBitRingedly( const Byte a[], Index begin, Index end )
 //-----------------------------------------------------------------------------
 
 /** Sets all 8 bits of byte[i] to 1
- * @param a a byte-array that stores the bitmap
+ * @param b the bitmap
  * @param i the index of the \em byte to be set
- * @see ClrByteBits()
+ * @see Bitmap_clrByteBits()
  */
-void SetByteBits( Byte a[], Index i )
+void Bitmap_setByteBits(Bitmap* b, Index i)
 {
-    a[i]= 0xFF;
+    cassert (ELEM_BITS == 8);
+
+    b->a[i] = 0xFF;
 }
 
 
 /** Clears all 8 bits of byte[i] to 0
- * @param a a byte-array that stores the bitmap
+ * @param b the bitmap
  * @param i the index of the cleared \em byte
- * @see SetByteBits()
+ * @see Bitmap_setByteBits()
  */
-void ClrByteBits( Byte a[], Index i )
+void Bitmap_clrByteBits(Bitmap* b, Index i)
 {
-    a[i]= 0x00;
+    cassert (ELEM_BITS == 8);
+
+    b->a[i] = 0x00;
 }
 
 
 /** Finds the lst risen byte (value=FFh)
  *      in the range [\a begin, \a end) of a give byte array.
- * @param a the byte-array
+ * @param b a bitmap containing the byte-array
  * @param begin the index of the \a begin search byte
  * @param end the \em limit index of the searched bytes (= \em last+1).
  * @return the index of the found risen byte;
  * @return \a end if not found
  */
-Index FindRisenByte( const Byte a[], Index begin, Index end )
+Index Bitmap_findRisenByte(const Bitmap* b, Index begin, Index end)
 {
+    cassert (ELEM_BITS == 8);
+
     Index i;
-    for (i= begin; i<end; i++)
-        if (a[i] == 0xFF) break;
+
+    for (i=begin; i<end; i++)
+        if (b->a[i] == 0xFF) break;
     return i;
 }
 
@@ -223,17 +242,20 @@ Index FindRisenByte( const Byte a[], Index begin, Index end )
  *      - It first searches bytes in [\a begin, \a end);
  *      - if not found, re-searches bytes in [\a 0, \a begin).
  *
- * @param a the byte-array
+ * @param b a bitmap containing the byte-array
  * @param begin the index of the \a begin search byte
  * @param end the \em limit index of the searched bytes (= \em last+1).
  * @return the index of the found risen byte;
  * @return \a end if not found
  */
-Index FindRisenByteRingedly( const Byte a[], Index begin, Index end )
+Index Bitmap_findRisenByteRingedly(const Bitmap* b, Index begin, Index end)
 {
-    Index i= FindRisenByte( a, begin, end );
+    cassert (ELEM_BITS == 8);
+
+    Index i = Bitmap_findRisenByte(b, begin, end);
+
     if (i == end) {
-        i= FindRisenByte( a, 0, begin );
+        i = Bitmap_findRisenByte(b, 0, begin);
         if (i == begin)
             return end;
     }

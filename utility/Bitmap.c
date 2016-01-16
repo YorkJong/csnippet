@@ -82,6 +82,29 @@ Bit Bitmap_getBit(const Bitmap* b, Index i)
     return (b->a[BITSLOT(i)] & BITMASK(i))  !=  0;
 }
 
+//-----------------------------------------------------------------------------
+
+/** Sets all bits to zero. */
+void Bitmap_clearAllBits(Bitmap* b)
+{
+    Index i;
+    for (i=0; i<b->n; ++i)
+        b->a[i] = 0;
+}
+
+
+/** Copies bits from \a src to \a tgt. */
+void Bitmap_copyAllBits(const Bitmap* src, Bitmap* tgt)
+{
+    Index i;
+
+    ASSERT_OP (src->n, ==, tgt->n);
+
+    for (i=0; i<src->n; ++i)
+        tgt->a[i] = src->a[i];
+}
+
+//-----------------------------------------------------------------------------
 
 /** Counts the total risen bit (value=1)
  *      in the range [\em 0, \a end) of a give bitmap.
@@ -274,3 +297,22 @@ Index Bitmap_findRisenByteRingedly(const Bitmap* b, Index begin, Index end)
     }
     return i;
 }
+
+//-----------------------------------------------------------------------------
+
+/** Returns the total bytes of the bitmap. */
+size_t Bitmap_totalBytes(const Bitmap* b)
+{
+    return Bitmap_totalBits(b) / 8;
+}
+
+
+/** Returns the byte array of the bitmap. */
+uint8_t* Bitmap_byteArray(const Bitmap* b)
+{
+    return (uint8_t*)(b->a);
+}
+
+
+//-----------------------------------------------------------------------------
+

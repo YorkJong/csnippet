@@ -40,11 +40,18 @@ void Bitmap_setBit(Bitmap*, Index i);
 void Bitmap_clrBit(Bitmap*, Index i);
 Bit Bitmap_getBit(const Bitmap*, Index i);
 
+void Bitmap_clearAllBits(Bitmap*);
+void Bitmap_copyAllBits(const Bitmap* src, Bitmap* tgt);
+
+//----------------------------------------------------------------------------
+
 size_t Bitmap_risenBitCount(const Bitmap*, Index end);
 size_t Bitmap_sunkBitCount(const Bitmap*, Index end);
 
 Index Bitmap_findRisenBit(const Bitmap*, Index begin, Index end);
 Index Bitmap_findRisenBitRingedly(const Bitmap*, Index begin, Index end);
+
+//----------------------------------------------------------------------------
 
 void Bitmap_setByteBits(Bitmap*, Index i);
 void Bitmap_clrByteBits(Bitmap*, Index i);
@@ -52,6 +59,10 @@ void Bitmap_clrByteBits(Bitmap*, Index i);
 Index Bitmap_findRisenByte(const Bitmap*, Index begin, Index end);
 Index Bitmap_findRisenByteRingedly(const Bitmap*, Index begin, Index end);
 
+size_t Bitmap_totalBytes(const Bitmap*);
+uint8_t* Bitmap_byteArray(const Bitmap*);
+
+//----------------------------------------------------------------------------
 
 #endif //  _BITMAP_H_
 

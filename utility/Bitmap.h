@@ -31,6 +31,7 @@ enum {
 typedef struct {
     Elem *a;    ///< the pointer to an byte array
     size_t n;       ///< the number of elements of the array
+    size_t p;       ///< the number of bits of a partition
 } Bitmap;
 
 void Bitmap_init(Bitmap*, Elem a[], size_t n);
@@ -61,6 +62,15 @@ Index Bitmap_findRisenByteRingedly(const Bitmap*, Index begin, Index end);
 
 size_t Bitmap_totalBytes(const Bitmap*);
 uint8_t* Bitmap_byteArray(const Bitmap*);
+
+//----------------------------------------------------------------------------
+
+void Bitmap_setPartTotalBits(Bitmap*, size_t nBits);
+size_t Bitmap_totalParts(const Bitmap*);
+Elem Bitmap_maxPartValue(const Bitmap*);
+void Bitmap_setPart(Bitmap*, Index i, Elem val);
+Elem Bitmap_getPart(const Bitmap*, Index i);
+void Bitmap_fillAllParts(Bitmap*, Elem val);
 
 //----------------------------------------------------------------------------
 

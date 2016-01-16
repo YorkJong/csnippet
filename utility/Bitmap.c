@@ -35,6 +35,7 @@ void Bitmap_init(Bitmap* b, Elem a[], size_t n)
 {
     b->a = a;
     b->n = n;
+    b->p = 1;
 }
 
 
@@ -311,6 +312,105 @@ size_t Bitmap_totalBytes(const Bitmap* b)
 uint8_t* Bitmap_byteArray(const Bitmap* b)
 {
     return (uint8_t*)(b->a);
+}
+
+
+//------------------------------------------------------------------------------
+// Partition-wise operators
+//------------------------------------------------------------------------------
+
+/** Sets the total bits of a partition of a bitmap.
+ * @param[out] b the bitmap
+ * @param[in] nBits the number of bits of a partition of the bitmap
+ */
+void Bitmap_setPartTotalBits(Bitmap* b, size_t nBits)
+{
+    ASSERT_OP (nBits, <=, ELEM_BITS);
+    ASSERT_OP (nBits, >, 0);
+
+    b->p = nBits;
+}
+
+
+/** Returns the total partitions of the bitmap. */
+size_t Bitmap_totalParts(const Bitmap* b)
+{
+    return Bitmap_totalBits(b) / b->p;
+}
+
+
+/** Returns maxima value of a partition. */
+Elem Bitmap_maxPartValue(const Bitmap* b)
+{
+    Elem x;
+
+    ASSERT_OP (b->p, >=, 1);
+    ASSERT_OP (b->p, <=, ELEM_BITS);
+
+    x = 1 << (b->p - 1);
+    return x | (x - 1);
+}
+
+
+/** Sets part[i] to a value
+ * @param[out] b the bitmap
+ * @param[in] i the index of the \em bits to be set
+ * @param[in] val the value to set
+ */
+void Bitmap_setPart(Bitmap* b, Index i, Elem val)
+{
+    Index bit_idx;
+    Index begin = i*b->p;
+    Index end = begin + b->p;
+
+    ASSERT_OP (i, <, Bitmap_totalParts(b));
+    ASSERT_OP (val, <=, Bitmap_maxPartValue(b));
+
+    for (bit_idx=begin; bit_idx<end; ++bit_idx) {
+        if (val & 0x00000001)
+            Bitmap_setBit(b, bit_idx);
+        else
+            Bitmap_clrBit(b, bit_idx);
+        val >>= 1;
+    }
+}
+
+
+/** Gets part[i]
+ * @param[in] b the bitmap
+ * @param[in] i the index of the gotten bits
+ * @return bits[i]
+ */
+Elem Bitmap_getPart(const Bitmap* b, Index i)
+{
+    Index begin = i*b->p;
+    Index end = begin + b->p;
+    Index bit_idx = end;
+    Elem val = 0;
+
+    ASSERT_OP (i, <, Bitmap_totalParts(b));
+
+    for (;;) {
+        val |= Bitmap_getBit(b, --bit_idx);
+        if (bit_idx == begin)
+            break;
+        val <<= 1;
+    }
+
+    return val;
+}
+
+
+/** Fills all partitions with a given value.
+ * @param[in] b the bitmap
+ * @param[in] val the value to fill
+ */
+void Bitmap_fillAllParts(Bitmap* b, Elem val)
+{
+    Index i;
+
+    for (i=0; i<Bitmap_totalParts(b); ++i)
+        Bitmap_setPart(b, i, val);
 }
 
 
